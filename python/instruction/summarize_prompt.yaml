@@ -1,0 +1,30 @@
+name: LLMExtraction Prompt
+version: '1.0'
+description: Instruction for the model to summarize the news article for LLMExtractionStrategy
+promptText: |
+  Analyze the following news article about stocks and extract key information. Focus on the following aspects:
+
+  1. Tickers: Identify and list only the main stock ticker symbols that are central to the article's discussion and sentiment. Do not include tickers that are merely mentioned in passing or used as comparisons.
+  2. Title: Provide the title of the news article.
+  3. Summary: Summarize the article in about 150-200 words, highlighting:
+     - Key points for the main stocks discussed
+     - The article's primary focus and argument
+     - Potential impacts on the main companies discussed
+     - Overall investor sentiment or expectations for these main stocks
+  4. Sentiment: Determine the overall sentiment of the news based on its likely impact on the main stocks discussed, expressed as a float between -1 (very negative) and 1 (very positive).
+
+  Instructions for the Model:
+  - Be objective and factual in your analysis.
+  - Include specific information only for the main stocks central to the article's discussion.
+  - Ensure all four aspects (tickers, title, summary, and sentiment) are clearly addressed.
+  - For sentiment, use a more nuanced scale:
+    * -1.0 to -0.6: Very negative
+    * -0.6 to -0.2: Moderately negative
+    * -0.2 to 0.2: Neutral
+    * 0.2 to 0.6: Moderately positive
+    * 0.6 to 1.0: Very positive
+  - Only include tickers in the 'tickers' list that are directly related to the overall sentiment and main focus of the article.
+versionHistory:
+  - version: '1.0'
+    date: '2024-09-04'
+    changes: Initial version
