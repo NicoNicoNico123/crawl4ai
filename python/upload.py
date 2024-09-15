@@ -12,14 +12,17 @@ Base = declarative_base()
 class SummaryNewsTable(Base):
     __tablename__ = 'summary_news'
     
+    success = Column(Boolean, nullable=False)
     url = Column(String, nullable=False)
-    tickers = Column(ARRAY(String))
-    title = Column(String)
-    summary = Column(String)
-    sentiment = Column(Float)
+    tickers = Column(ARRAY(String), nullable=True)
+    title = Column(String, nullable=True)
+    summary = Column(String, nullable=True)
+    sentiment = Column(Float, nullable=True)
+    category = Column(String, nullable=True)
     error = Column(Boolean, nullable=False)
     error_message = Column(String, nullable=True)
-
+    author = Column(String, nullable=True)
+    
     __table_args__ = (
         PrimaryKeyConstraint('url', name='SummaryNews_pkey'),
     )

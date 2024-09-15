@@ -1,0 +1,70 @@
+name: LLMExtraction Prompt  
+version: '1.4'  
+description: Instruction for the model to extract and summarize information from a news article for LLMExtractionStrategy.
+
+promptText: |
+  Analyze the following news article about stocks and extract key information. Focus on the following aspects:
+
+  1. **Tickers**: Identify and list only the main stock ticker symbols that are central to the article's discussion and sentiment. Do not include tickers that are merely mentioned in passing or used as comparisons.
+  
+  2. **Title**: Provide the title of the news article.
+  
+  3. **Author**: Extract the author's name as listed in the article. If the author is not explicitly mentioned, respond with "Author not specified."
+
+  4. **Category**: Classify the article into one of the following categories:
+     - Corporate and Financial News
+     - Industry and Market Trends
+     - Product and Innovation
+     - Regulatory and Legal Developments
+     - Expert Analysis and Commentary
+
+  5. **Summary**: Summarize the article in about 150-200 words, highlighting:
+     - Key points for the main stocks discussed
+     - The article's primary focus and argument
+     - Potential impacts on the main companies discussed
+     - Overall investor sentiment or expectations for these main stocks
+
+  6. **Sentiment**: Determine the overall sentiment of the news based on investors' expected reactions, expressed as a float between -1 (very negative, leading to immediate selling of the stock) and 1 (very positive, leading to immediate buying of the stock). Utilize a Chain of Thought approach to analyze the news and assess investor sentiment accordingly.
+
+  Instructions for the Model:
+  - **Objective Analysis**: Maintain an objective and factual stance throughout your analysis.
+  - **Focus on Key Stocks**: Include specific information only for the main stocks central to the article's discussion.
+  - **Comprehensive Coverage**: Ensure all six aspects (tickers, title, author, category, summary, and sentiment) are thoroughly addressed.
+  - **Sentiment Scale**:
+    * **-1.0 to -0.6**: Very negative — Investors are likely to sell the stock immediately.
+    * **-0.6 to -0.2**: Moderately negative — Investors may sell or remain cautious.
+    * **-0.2 to 0.2**: Neutral — Investors show no strong reaction.
+    * **0.2 to 0.6**: Moderately positive — Investors may buy or hold the stock with optimism.
+    * **0.6 to 1.0**: Very positive — Investors are likely to buy the stock aggressively.
+  - **Chain of Thought Methodology**:
+
+    1. **Identify Key Factors**: Break down the news content to identify specific events, announcements, or data points that influence investor sentiment (e.g., earnings reports, regulatory changes, product launches).
+
+    2. **Analyze Impact**: Assess how each identified factor positively or negatively impacts the main stocks. Consider market reactions, historical data, and industry trends.
+
+    3. **Synthesize Information**: Combine the analysis of individual factors to form a holistic view of the sentiment.
+    
+    4. **Quantify Sentiment**: Translate the synthesized information into a sentiment score based on the defined scale.
+
+    5. **Justify the Score**: Ensure that the reasoning behind the sentiment score is clear and traceable through the analysis.
+  - **Ticker Inclusion**: Only include tickers in the 'tickers' list that are directly related to the overall sentiment and main focus of the article.
+  - **Category Classification**:
+    * **Corporate and Financial News**: Earnings reports, management changes, stock performance, investor relations.
+    * **Industry and Market Trends**: Sector developments, market competition, economic trends.
+    * **Product and Innovation**: New products, R&D, technological advancements.
+    * **Regulatory and Legal Developments**: Investigations, government policies, lawsuits.
+    * **Expert Analysis and Commentary**: Analyst recommendations, CEO statements, market insights.
+
+versionHistory:
+  - version: '1.0'
+    date: '2024-09-04'
+    changes: Initial version
+  - version: '1.1'
+    date: '2024-09-06'
+    changes: Added detailed trustworthiness metrics
+  - version: '1.3'
+    date: '2024-09-07'
+    changes: Added category classification and guidelines, Removed trustworthiness metrics
+  - version: '1.4'
+    date: '2024-09-09'
+    changes: Added instruction to extract the author's name from the article

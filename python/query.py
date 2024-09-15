@@ -15,8 +15,7 @@ from sqlalchemy import text, func
 
 load_dotenv()
 
-def dataframe_to_db(df, cls):
-    session, engine = DataBaseUpload.connect_sql()
+def dataframe_to_db(df, cls, session):
     primary_key_columns = {key.name for key in cls.__table__.primary_key}
 
     print(f"Primary key columns: {primary_key_columns}")
@@ -34,12 +33,11 @@ def dataframe_to_db(df, cls):
         
         try:
             session.execute(stmt)
-            session.commit()
             print(f"Data for {column_values} added/updated successfully.")
         except Exception as e:
             session.rollback()
             print(f"An error occurred: {e}")
-    session.close()
+            raise  # Re-raise the exception to be handled by the caller
 
 class DataBaseUpload:
 
@@ -60,8 +58,9 @@ class DataBaseUpload:
 class NewsQuery:
 
     @staticmethod
-    def querynews(start_date=None, end_date=None, table_name='rss_news_fmp', site=None):
-        session, engine = DataBaseUpload.connect_sql()
+    def querynews(start_date=None, end_date=None, table_name='rss_news_fmp', site=None, symbol=None, session=None):
+        if session is None:
+            raise ValueError("Session must be provided")
 
         try:
             # Fetch the earliest and latest dates if not provided
@@ -83,47 +82,59 @@ class NewsQuery:
             SELECT
                 "publishedDate", 
                 url,
-                site
+                site,
+                symbol
             FROM 
                 {table_name}
             WHERE 
-                "publishedDate" AT TIME ZONE 'America/New_York' >= '{start_date.strftime('%Y-%m-%d %H:%M:%S')}'::timestamp
-                AND "publishedDate" AT TIME ZONE 'America/New_York' < '{end_date.strftime('%Y-%m-%d %H:%M:%S')}'::timestamp
-                {f"AND site = '{site}'" if site else ''}
+                "publishedDate" AT TIME ZONE 'America/New_York' >= '{start_date}'::date
+                AND "publishedDate" AT TIME ZONE 'America/New_York' < '{end_date}'::date
+                {f"AND site = :site" if site else ''}
+                {f"AND :symbol = ANY(symbol)" if symbol else ''}
             ORDER BY 
                 "publishedDate";
             """)
 
-            df = pd.read_sql_query(query, engine)
+            params = {
+                'start_date': start_date,
+                'end_date': end_date,
+                'site': site,
+                'symbol': symbol
+            }
+
+            df = pd.read_sql_query(query, session.connection(), params=params)
             df = df.sort_values(by='publishedDate', ascending=True)
             print(f"Number of rows in df: {len(df)}")
             return df
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            raise  # Re-raise the exception to be handled by the caller
 
-        finally:
-            session.close()
-
-
-   
 if __name__ == "__main__":
-    # Test DataBaseUpload
-    # try:
-    #     session, engine = DataBaseUpload.connect_sql()
-    #     print("Database connection successful!")
-    #     # Test a simple query
-    #     result = session.execute(text("SELECT 1"))
-    #     print("Query result:", result.scalar())
-    #     session.close()
-    # except Exception as e:
-    #     print("Database connection failed:", str(e))
-
-    # Test querynewsall method
+     # Test DataBaseUpload
     try:
-        start_date = datetime.now() - timedelta(days=7)  # 7 days ago
-        #end_date = datetime.now()
-        news_df = NewsQuery.querynews(start_date)
-        print("querynewsall test successful!")
-        print(f"Retrieved {len(news_df)} news items")
-        print("Sample data:")
-        print(news_df.head())
+        session, engine = DataBaseUpload.connect_sql()
+        print("Database connection successful!")
+        
+        # Test querynews method
+        try:
+            start_date = datetime.now() - timedelta(days=7)  # 7 days ago
+            end_date = datetime.now()
+            news_df = NewsQuery.querynews(
+                start_date=start_date,
+                end_date=end_date,
+                symbol='AAPL',
+                table_name='stock_news_fmp',  # Make sure this is the correct table name
+                session=session
+            )
+            print("querynews test successful!")
+            print(f"Retrieved {len(news_df)} news items")
+            print("Sample data:")
+            print(news_df.head())
+        except Exception as e:
+            print("querynews test failed:", str(e))
+        
     except Exception as e:
-        print("querynewsall test failed:", str(e))
+        print("Database connection failed:", str(e))
+    finally:
+        session.close()

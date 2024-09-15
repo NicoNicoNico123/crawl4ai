@@ -14,14 +14,24 @@ from hook import check_and_skip_ad
 
 class NewsSentiment(BaseModel):
     tickers: List[str] = Field(..., description="List of ticker symbols for the main companies discussed in the news article, directly related to the sentiment.")
+    success: bool = Field(..., description="Indicates whether the article or content was available and successfully retrieved")
     title: str = Field(..., description="Title of the news article.")
+    author: str = Field(..., description="Author of the news article.")
     summary: str = Field(..., description="Summary of the news article, focusing on the main companies and their sentiment.")
     sentiment: float = Field(..., description="Overall sentiment score of the news for the main companies, ranging from -1 (very negative) to 1 (very positive).", ge=-1, le=1)
+    category: str = Field(..., description="Category of the news article, such as 'Corporate and Financial News', 'Industry and Market Trends', 'Product and Innovation', 'Regulatory and Legal Developments', or 'Expert Analysis and Commentary'.")
+
+class Config:
+    def __init__(self, openai_api_base):
+        load_dotenv()
+        self.openai_api_key = os.getenv('OPENAI_API_KEY')
+        os.environ['OPENAI_API_BASE'] = openai_api_base
+
 
 class Summarize:
 
-    def __init__(self):
-        load_dotenv()
+    def __init__(self, openai_api_base):
+        self.config = Config(openai_api_base)
         crawler_strategy = LocalSeleniumCrawlerStrategy(verbose=True)
         crawler_strategy.set_hook('after_get_url', check_and_skip_ad)
         self.crawler = WebCrawler(verbose=True, crawler_strategy=crawler_strategy)
@@ -45,9 +55,10 @@ class Summarize:
             url=url,
             word_count_threshold=5,
             bypass_cache=True,
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+            user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15",
             extraction_strategy=LLMExtractionStrategy(
-                provider="openai/gpt-4o-mini", api_token=os.getenv('OPENAI_API_KEY'),
+                provider="openai/Users/nico/coding/mlxlm/model/qwen2-72B-Instruct-8bit",
+                api_key=None,
                 schema=NewsSentiment.schema(),
                 extraction_type="schema",
                 instruction=self.prompt, 
@@ -55,14 +66,16 @@ class Summarize:
         if result.extracted_content is None:
             print(f"Failed to extract content from {url}")
             return pd.DataFrame({
-            'url': [url],
-            'tickers': [None],
-            'title': [None],
-            'summary': [None],
-            'sentiment': [None],
-            'error': [True],
-            'error_message': [result.error_message]
-        })
+                'success': [False],
+                'url': [url],
+                'tickers': [[]],  # Use an empty list instead of None
+                'title': [''],    # Use an empty string instead of None
+                'summary': [''],  # Use an empty string instead of None
+                'sentiment': [None],  # Use a default value (e.g., 0.0) instead of None
+                'category': [''],  # Use an empty string instead of None
+                'error': [True],
+                'error_message': [result.error_message or '']  # Use an empty string if error_message is None
+            })
         # Parse the JSON string into a Python dictionary
         data = json.loads(result.extracted_content)
         
@@ -76,12 +89,13 @@ class Summarize:
         return df
 
 if __name__ == "__main__":
-    summarizer = Summarize()
+    openai_api_base = 'http://host.docker.internal:8080/v1'
+    summarizer = Summarize(openai_api_base)
     # print("Loaded prompt:")
     # print(summarizer.prompt)
 
     # Test summarize() method
-    test_url = "https://www.reuters.com/markets/us/amazon-workers-join-teamsters-unfair-labor-practices-strikes-us-2024-08-29/"
+    test_url = "https://www.investors.com/news/technology/nvidia-stock-doj-issues-subpoenas-in-ai-antitrust-probe/"
     print(f"\nTesting summarize() with URL: {test_url}")
     try:
         result_df = summarizer.summarize(test_url)
