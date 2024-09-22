@@ -3,7 +3,7 @@
 # Set variables
 IMAGE_NAME="crawl4ai-jupyter"
 CONTAINER_NAME="crawl4ai-jupyter-container"
-LOCAL_MOUNT_PATH=$(pwd -W)  # Change this to your desired local path
+LOCAL_MOUNT_PATH=$(pwd)  # Change this to your desired local path
 CONTAINER_MOUNT_PATH="/workspace"
 JUPYTER_PORT=8888
 
@@ -12,7 +12,7 @@ echo "Starting Crawl4AI with JupyterLab setup script..."
 
 # Build the Docker image
 echo "Building Docker image: $IMAGE_NAME"
-docker build -t $IMAGE_NAME . --progress=plain
+docker build --platform linux/amd64 -t $IMAGE_NAME . --progress=plain
 
 # Check if the build was successful
 if [ $? -eq 0 ]; then

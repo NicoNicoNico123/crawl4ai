@@ -17,7 +17,6 @@ class SummaryNewsTable(Base):
     tickers = Column(ARRAY(String), nullable=True)
     title = Column(String, nullable=True)
     summary = Column(String, nullable=True)
-    sentiment = Column(Float, nullable=True)
     category = Column(String, nullable=True)
     error = Column(Boolean, nullable=False)
     error_message = Column(String, nullable=True)

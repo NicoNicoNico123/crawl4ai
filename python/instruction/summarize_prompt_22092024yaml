@@ -1,0 +1,86 @@
+name: LLMExtraction Prompt  
+version: '1.4'  
+description: Instruction for the model to extract and summarize information from a news article for LLMExtractionStrategy.
+
+promptText: |
+  """
+  Please analyze the following news article and extract key information by following these steps:
+
+  **Tickers:**
+  
+  - Carefully read the article to identify the main stock ticker symbols.
+  - Focus only on tickers that are primary to the article's content.
+
+  **Title:**
+  
+  - Locate and provide the exact title of the news article.
+
+  **Author:**
+  
+  - Find the name of the author as listed in the article.
+  - If the author is not explicitly mentioned, state "Author not specified."
+
+  **Category:**
+  
+  - Determine the most appropriate category for the article from the following options:
+    - Corporate and Financial News
+    - Industry and Market Trends
+    - Product and Innovation
+    - Regulatory and Legal Developments
+    - Expert Analysis and Commentary
+  - Choose the category that best fits the overall content and focus of the article.
+
+  **Summary:**
+  
+  - Write a concise summary of the article within 300 words.
+  - Focus solely on the information presented in the article without adding any external details or opinions.
+
+  **Example:**
+
+  Given the following news article:
+
+  "GlobalTech Unveils Next-Gen Processor Chip"
+
+  GlobalTech Inc. (GTI) has announced the release of its latest processor chip, which promises to revolutionize computing speed. The new chip, named QuantumX, is expected to outperform competitors like NanoChip Corp. (NCC) and MicroProcessors Ltd. CEO Alex Thompson expressed optimism about the product's impact on the market.
+
+  By Sarah Lin
+
+  Let's apply the steps:
+
+  **Tickers:**
+  
+  - Main ticker symbol: GTI
+  - Excluded tickers mentioned for comparison: NCC
+
+  **Title:**
+  
+  - "GlobalTech Unveils Next-Gen Processor Chip"
+
+  **Author:**
+  
+  - Sarah Lin
+
+  **Category:**
+  
+  - Product and Innovation
+
+  **Summary:**
+  
+  GlobalTech Inc. has released the QuantumX processor chip, which is expected to significantly enhance computing speeds. CEO Alex Thompson is optimistic about its market impact, positioning it ahead of competitors.
+
+  Now, please proceed to analyze the provided news article using the steps and format shown in the example.
+  """
+
+versionHistory:
+  - version: '1.0'
+    date: '2024-09-04'
+    changes: Initial version
+  - version: '1.1'
+    date: '2024-09-06'
+    changes: Added detailed trustworthiness metrics
+  - version: '1.3'
+    date: '2024-09-07'
+    changes: Added category classification and guidelines, Removed trustworthiness metrics
+  - version: '1.4'
+    date: '2024-09-09'
+    changes: Added instruction to extract the author's name from the article

@@ -1,0 +1,171 @@
+name: LLMExtraction Prompt  
+version: '1.4'  
+description: Instruction for the model to extract and summarize information from a news article for LLMExtractionStrategy.
+
+promptText: |
+  """
+  Analyze the following news article about stocks and extract key information. Focus on the following aspects:
+
+  **Tickers:** 
+  Identify and list only the main stock ticker symbols that are central to the article's discussion and sentiment. Do not include tickers that are merely mentioned in passing or used as comparisons.
+
+  **Title:** 
+  Provide the title of the news article.
+
+  **Author:** 
+  Extract the author's name as listed in the article. If the author is not explicitly mentioned, respond with "Author not specified."
+
+  **Category:** 
+  Classify the article into one of the following categories:
+  - Corporate and Financial News
+  - Industry and Market Trends
+  - Product and Innovation
+  - Regulatory and Legal Developments
+  - Expert Analysis and Commentary
+
+  **Summary:** 
+  Summarize the article in about 150-200 words, focusing solely on the content presented in the article. Do not include potential impacts on the main companies or investor sentiment. The summary should cover:
+  - Key points and facts reported in the article
+  - The primary focus and main events described
+
+  **Sentiment:** 
+  Determine the overall sentiment of the news based on investors' expected reactions, expressed as a float between -1 (very negative, leading to immediate selling of the stock) and 1 (very positive, leading to immediate buying of the stock). Important: The sentiment value must always be a valid float within the specified range or null if sentiment cannot be determined. Utilize a Chain of Thought approach to analyze the news and assess investor sentiment accordingly.
+
+  **Enhanced Sentiment Guidelines for Consistency:**
+
+  **Category-Based Sentiment Assignment:** 
+  Use the Category classification to guide sentiment determination. Each category has specific sentiment guidelines based on the nature of events typically associated with it.
+
+  **Corporate and Financial News:**
+
+  - **Earnings Reports:**
+    - Positive Surprise (Earnings Beat): Assign between 0.2 to 0.6
+    - Significantly Positive Surprise: Assign between 0.6 to 1.0
+    - Negative Surprise (Earnings Miss): Assign between -0.6 to -0.2
+    - Significantly Negative Surprise: Assign between -1.0 to -0.6
+    - Neutral (Earnings Meet Expectations): Assign between -0.2 to 0.2
+
+  - **Management Changes:**
+    - Positive Change (e.g., promotion of a respected leader): Assign between 0.2 to 0.6
+    - Highly Positive Change (e.g., appointment of a renowned industry leader): Assign between 0.6 to 1.0
+    - Negative Change (e.g., sudden resignation amid scandal): Assign between -0.6 to -0.2
+    - Highly Negative Change (e.g., resignation due to major fraud): Assign between -1.0 to -0.6
+
+  **Industry and Market Trends:**
+
+  - **Sector Developments:**
+    - Positive Trends (e.g., growth in sector): Assign between 0.2 to 0.6
+    - Strong Positive Trends: Assign between 0.6 to 1.0
+    - Negative Trends (e.g., decline in sector): Assign between -0.6 to -0.2
+    - Strong Negative Trends: Assign between -1.0 to -0.6
+
+  - **Market Competition:**
+    - Favorable Competitive Positioning: Assign between 0.2 to 0.6
+    - Strong Favorable Positioning: Assign between 0.6 to 1.0
+    - Unfavorable Competitive Positioning: Assign between -0.6 to -0.2
+    - Strong Unfavorable Positioning: Assign between -1.0 to -0.6
+
+  **Product and Innovation:**
+
+  - **Product Launches or Innovations:**
+    - Successful Launches: Assign between 0.2 to 0.6
+    - Highly Successful Launches (e.g., record-breaking sales): Assign between 0.6 to 1.0
+    - Failed Launches: Assign between -0.6 to -0.2
+    - Major Failures: Assign between -1.0 to -0.6
+
+  - **Technological Advancements:**
+    - Breakthroughs: Assign between 0.2 to 0.6
+    - Major Breakthroughs: Assign between 0.6 to 1.0
+    - Setbacks: Assign between -0.6 to -0.2
+    - Major Setbacks: Assign between -1.0 to -0.6
+
+  **Regulatory and Legal Developments:**
+
+  - **Regulatory Fines or Legal Penalties:**
+    - Impact Assessment: Evaluate the described impact in the article to determine sentiment.
+      - High Negative Impact: Assign between -0.8 to -1.0
+      - Moderate Negative Impact: Assign between -0.4 to -0.8
+      - Low Negative Impact: Assign between -0.2 to -0.4
+
+  - **Government Policies or Lawsuits:**
+    - Favorable Policies or Lawsuit Outcomes: Assign between 0.2 to 0.6
+    - Highly Favorable Outcomes: Assign between 0.6 to 1.0
+    - Unfavorable Policies or Lawsuit Outcomes: Assign between -0.6 to -0.2
+    - Highly Unfavorable Outcomes: Assign between -1.0 to -0.6
+
+  **Expert Analysis and Commentary:**
+
+  - **Analyst Recommendations:**
+    - Buy or Strong Buy Recommendations: Assign between 0.2 to 0.6
+    - Very Strong Buy Recommendations: Assign between 0.6 to 1.0
+    - Sell or Strong Sell Recommendations: Assign between -0.6 to -0.2
+    - Very Strong Sell Recommendations: Assign between -1.0 to -0.6
+
+  - **CEO Statements or Market Insights:**
+    - Positive Outlooks: Assign between 0.2 to 0.6
+    - Highly Positive Outlooks: Assign between 0.6 to 1.0
+    - Negative Outlooks: Assign between -0.6 to -0.2
+    - Highly Negative Outlooks: Assign between -1.0 to -0.6
+
+  **Impact and Context Consideration:**
+
+  - **Financial Impact:** 
+  Assess the severity based on the article’s description (e.g., “substantial financial burden” vs. “minor penalty”).
+
+  - **Reputational Impact:** 
+  Determine if the event affects the company's reputation significantly.
+
+  - **Legal and Compliance Context:** 
+  Consider the company’s history with similar issues if mentioned.
+
+  **Chain of Thought Methodology:**
+  - Identify Key Factors: Break down the news content to identify specific events, announcements, or data points that influence investor sentiment (e.g., regulatory fines, earnings reports).
+  - Determine Category: Classify the article into one of the predefined categories.
+  - Assess Impact: Evaluate the severity and context of the event as described in the article based on the category-specific guidelines.
+  - Assign Sentiment Range: Based on the assessed impact and category, select the appropriate sentiment range from the guidelines.
+  - Determine Sentiment Score: Choose a specific float value within the selected range that best reflects the described impact.
+  - Justify the Score: Provide a brief explanation of the reasoning behind the sentiment score to ensure traceability and transparency.
+
+  **Success:** 
+    Return `true` if the article or content was available and successfully retrieved. Return `false` if the content is not available, or there are any issues in extracting the necessary information.
+
+  **Instructions for the Model:**
+  - Objective Analysis: Maintain an objective and factual stance throughout your analysis.
+  - Focus on Key Stocks: Include specific information only for the main stocks central to the article's discussion.
+  - Comprehensive Coverage: Ensure all seven aspects (tickers, title, author, category, summary, sentiment, and success) are thoroughly addressed.
+  - Sentiment Scale: Utilize the enhanced sentiment guidelines.
+  - Chain of Thought Methodology: Follow the step-by-step approach to ensure a structured and justified sentiment score.
+  - Ticker Inclusion: Only include tickers in the 'tickers' list that are directly related to the overall sentiment and main focus of the article.
+
+  **Example Output:**
+  
+    "tickers": ["META"],
+    "title": "Meta Fined Over $400 Million By EU For Alleged Personal Data Collection Violation",
+    "author": "Brian Bushard",
+    "category": "Regulatory and Legal Developments",
+    "summary": "Meta, the parent company of Facebook and Instagram, has been fined over $400 million by the European Union for allegedly violating the General Data Protection Regulation (GDPR). The Irish Data Protection Commission found that Meta's practice of requiring users to accept targeted ads as part of its terms of service was not compliant with GDPR. Meta has expressed disagreement with the ruling and plans to appeal, stating that its data collection and advertising practices are essential to its service. This fine is part of a series of penalties imposed on Meta by the EU for its handling of user data.",
+    "sentiment": -0.5,
+    "success": true
+  
+  **Justification for Sentiment Score (-0.5):**
+  The article reports that Meta has been fined over $400 million by the EU for GDPR violations. According to the enhanced sentiment guidelines:
+  - **Category:** Regulatory and Legal Developments
+  - **Event Type:** Regulatory Fine
+  - **Impact Assessment:** The fine amount indicates a high negative impact due to the substantial financial burden and potential reputational damage.
+  - **Assigned Range:** -0.4 to -0.8
+  Given the significant nature of the fine and its implications on Meta's financial standing and reputation, a sentiment score of -0.5 is appropriate. This score reflects a very negative investor reaction, consistent with similar regulatory fine news affecting large companies.
+  """
+
+versionHistory:
+  - version: '1.0'
+    date: '2024-09-04'
+    changes: Initial version
+  - version: '1.1'
+    date: '2024-09-06'
+    changes: Added detailed trustworthiness metrics
+  - version: '1.3'
+    date: '2024-09-07'
+    changes: Added category classification and guidelines, Removed trustworthiness metrics
+  - version: '1.4'
+    date: '2024-09-09'
+    changes: Added instruction to extract the author's name from the article
