@@ -3,7 +3,7 @@
 # Set variables
 IMAGE_NAME="crawl4ai-jupyter"
 CONTAINER_NAME="crawl4ai-jupyter-container"
-LOCAL_MOUNT_PATH=$(pwd)  # Change this to your desired local path
+LOCAL_MOUNT_PATH=$(pwd -W)  # Change this to your desired local path
 CONTAINER_MOUNT_PATH="/workspace"
 JUPYTER_PORT=8888
 

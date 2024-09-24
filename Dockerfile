@@ -2,7 +2,7 @@
 FROM unclecode/crawl4ai:latest
 
 # Install JupyterLab
-RUN pip install jupyterlab sqlalchemy psycopg2-binary pandas
+RUN pip install jupyterlab sqlalchemy psycopg2-binary pandas colorama
 
 # Create a directory for mounting the local volume
 RUN mkdir /workspace

@@ -1,0 +1,81 @@
+name: LLMExtraction Prompt  
+version: '1.4'  
+description: Instruction for the model to extract and summarize information from a news article for LLMExtractionStrategy.
+
+promptText: |
+  """
+  Please analyze the following news article and extract key information by following these steps:
+
+  Tickers:
+
+  Carefully read the article to identify the main stock ticker symbols.
+  Focus only on tickers that are primary to the article's content.
+  Title:
+
+  Locate and provide the exact title of the news article.
+  Author:
+
+  Find the name of the author as listed in the article.
+  If the author is not explicitly mentioned, state "Author not specified."
+
+  Category:
+  Determine the most appropriate category for the article from the following options:
+  Corporate and Financial News: Articles about company earnings, mergers and acquisitions, financial results, leadership changes, and corporate strategies.
+  Industry and Market Trends: Articles discussing broader industry movements, market trends, economic indicators, and sector analyses.
+  Product and Innovation: Articles focused on new product launches, technological advancements, research developments, and innovation within companies.
+  Regulatory and Legal Developments: Articles covering legal issues, regulations, compliance matters, lawsuits, and government policies affecting companies.
+  Expert Analysis and Commentary: Articles featuring expert opinions, analyses, forecasts, interviews, or commentary on companies or markets.
+  Choose the category that best fits the overall content and focus of the article based on these descriptions.
+
+  Summary:
+  Write a detailed summary of the article within 1000 words.
+  Focus mainly on the information relevant to the main ticker symbol(s).
+  Ensure that the summary is comprehensive, covering key points and details about the ticker symbol(s).
+  Avoid adding any external details or opinions; only use information from the article.
+  Example:
+
+  Given the following news article:
+
+  "GlobalTech Unveils Next-Gen Processor Chip"
+
+  GlobalTech Inc. (GTI) has announced the release of its latest processor chip, which promises to revolutionize computing speed. The new chip, named QuantumX, is expected to outperform competitors like NanoChip Corp. (NCC) and MicroProcessors Ltd. CEO Alex Thompson expressed optimism about the product's impact on the market.
+
+  By Sarah Lin
+
+  Let's apply the steps:
+
+  Tickers:
+
+  Main ticker symbol: GTI
+  Excluded tickers mentioned for comparison: NCC
+  Title:
+
+  "GlobalTech Unveils Next-Gen Processor Chip"
+  Author:
+
+  Sarah Lin
+  Category:
+  Product and Innovation: The article focuses on GlobalTech's new processor chip launch and its technological advancements.
+  Summary:
+
+  GlobalTech Inc. (GTI) has announced the release of its latest processor chip, QuantumX, which is set to revolutionize computing speeds. The new chip is expected to outperform competitors, positioning GTI ahead of companies like NanoChip Corp. (NCC) and MicroProcessors Ltd. CEO Alex Thompson expressed optimism about QuantumX's potential impact on the market, highlighting its advanced technology and anticipated consumer adoption. This launch signifies a major step for GTI in solidifying its position in the tech industry and could lead to increased market share and revenues for the company.
+
+  Now, please proceed to analyze the provided news article using the steps and format shown in the example.
+  """
+
+versionHistory:
+  - version: '1.0'
+    date: '2024-09-04'
+    changes: Initial version
+  - version: '1.1'
+    date: '2024-09-06'
+    changes: Added detailed trustworthiness metrics
+  - version: '1.3'
+    date: '2024-09-07'
+    changes: Added category classification and guidelines, Removed trustworthiness metrics
+  - version: '1.4'
+    date: '2024-09-09'
+    changes: Added instruction to extract the author's name from the article
+  - version: '1.5'
+    date: '2024-09-22'
+    changes: Prompt Update with detailed

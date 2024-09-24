@@ -53,9 +53,9 @@ class SummaryNews:
         
 
 if __name__ == "__main__":
-    start_date = '2023-01-01'
-    end_date = '2023-01-31'
+    start_date = '2023-01-15'
+    end_date = '2023-02-15'
     SummaryNews.summarize(start_date=start_date, 
                            end_date=end_date,
-                           symbol='TSLA', 
+                           symbol='META', 
                            table_name='stock_news_fmp')

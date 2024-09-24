@@ -4,62 +4,100 @@ description: Instruction for the model to extract and summarize information from
 
 promptText: |
   """
-  Please analyze the following news article and extract key information by following these steps:
+  Please analyze the following news article and extract key information by following the steps outlined below:
 
-  Tickers:
+  1. Tickers
+  Action: Carefully read the article to identify the main stock ticker symbols.
+  Output Format:
+  Main Ticker Symbol(s): [List of tickers]
+  Excluded Ticker Symbol(s): [List of tickers, if any]
 
-  Carefully read the article to identify the main stock ticker symbols.
-  Focus only on tickers that are primary to the article's content.
-  Title:
+  2. Title
+  Action: Locate and provide the exact title of the news article.
+  Output Format:
+  Title: "[Exact title]"
 
-  Locate and provide the exact title of the news article.
-  Author:
+  3. Author
+  Action: Find the name of the author as listed in the article, including checking for any <div> elements that may contain the author's name.
+  Output Format:
+  Author: [Author's Name]
+  If the author is not explicitly mentioned, state:
+  Author: "Author not specified."
 
-  Find the name of the author as listed in the article.
-  If the author is not explicitly mentioned, state "Author not specified."
-  Category:
+  4. Source Category
+  Action: Determine the most appropriate category for the article from the options below.
 
-  Determine the most appropriate category for the article from the following options:
-  Corporate and Financial News: Articles about company earnings, mergers and acquisitions, financial results, leadership changes, and corporate strategies.
-  Industry and Market Trends: Articles discussing broader industry movements, market trends, economic indicators, and sector analyses.
-  Product and Innovation: Articles focused on new product launches, technological advancements, research developments, and innovation within companies.
-  Regulatory and Legal Developments: Articles covering legal issues, regulations, compliance matters, lawsuits, and government policies affecting companies.
-  Expert Analysis and Commentary: Articles featuring expert opinions, analyses, forecasts, interviews, or commentary on companies or markets.
-  Choose the category that best fits the overall content and focus of the article based on these descriptions.
-  Summary:
+  Category Definitions
 
-  Write a detailed summary of the article within 300 words.
-  Focus mainly on the information relevant to the main ticker symbol(s).
-  Ensure that the summary is comprehensive, covering key points and details about the ticker symbol(s).
-  Avoid adding any external details or opinions; only use information from the article.
-  Example:
+  News Reporting
+  Explanation: Articles that provide unbiased, fact-based information about events, developments, or trends. These pieces focus on delivering accurate and objective news without personal opinions or promotional content.
+  Examples: Breaking news stories, factual updates on market movements, investigative journalism pieces.
 
+  Opinion Editorials
+  Explanation: Articles that express personal viewpoints, analyses, or interpretations of events and trends. These pieces are typically written by experts, thought leaders, or contributors and aim to persuade or inform readers through subjective perspectives.
+  Examples: Opinion columns in newspapers, guest editorials on news websites, analytical articles offering insights or predictions.
+
+  Official Announcements Press Releases
+  Explanation: Official statements issued by companies, organizations, or government bodies to announce news, products, events, or other significant updates. These articles are authoritative sources of information directly from the entity involved.
+  Examples: Company press releases announcing a new product launch, official statements from government agencies, organizational updates on mergers or acquisitions.
+
+  Key Points for Accurate Categorization
+
+  Single Category Assignment:
+  Each news article must be assigned to only one category based on its primary purpose and content.
+  Primary Focus Determination:
+  News Reporting: Identify if the article is delivering factual, objective information without personal bias or promotional intent.
+  Opinion/Editorials: Determine if the article is presenting a personal viewpoint, analysis, or interpretation aimed at persuading or informing through subjective insights.
+  Official Announcements/Press Releases: Check if the article is an authoritative statement from an organization or entity announcing news, products, or events.
+
+  Clear Priority Guidelines:
+  Official Announcements: If an article is an official statement (e.g., press release), it should be categorized under "Official Announcements/Press Releases" regardless of the publication source.
+  Opinion Pieces: If an article contains personal opinions or analyses, it should be categorized under "Opinion/Editorials (Op-Eds)" regardless of where it is published.
+  News Reporting: Articles that do not fit the above criteria should be categorized under "News Reporting."
+  Exclusive Definitions:
+
+  Ensure that category definitions are mutually exclusive to prevent overlap and misclassification. An article should clearly fit into one category based on its content.
+  Consistent Application:
+
+  Apply these definitions uniformly across all articles to maintain consistency and reliability in your categorization process.
+ 
+  5. Summary
+  Action: Write a detailed summary of the article within 1000 words.
+  Focus Areas:
+  - Information relevant to the main ticker symbol(s).
+  - Comprehensive coverage of key points and details about the ticker symbol(s).
+  Guidelines:
+  Avoid adding external details or opinions; use only information from the article.
+  Output Format:
+  Summary: [Detailed summary]
+
+  Example
   Given the following news article:
 
-  "GlobalTech Unveils Next-Gen Processor Chip"
+  "3 Bear Market Tech Stocks Most Likely to Make a Comeback"
 
-  GlobalTech Inc. (GTI) has announced the release of its latest processor chip, which promises to revolutionize computing speed. The new chip, named QuantumX, is expected to outperform competitors like NanoChip Corp. (NCC) and MicroProcessors Ltd. CEO Alex Thompson expressed optimism about the product's impact on the market.
+  The article discusses three tech stocks that are likely to make a comeback in the market. DocuSign (DOCU) is one of the stocks mentioned, which has lost 64% of its value in 2022 but has a reasonable valuation and a growing user base. Amazon (AMZN) is another stock mentioned, which has lost approximately half of its value since peaking in 2021 but has a strong cloud computing arm, AWS. Meta Platforms (META) is also mentioned, which has lost a huge chunk of its value in 2022 but has a large user base and a growing advertising business.
 
-  By Sarah Lin
+  By Jake Lerch, Justin Pope, and Will Healy
 
-  Let's apply the steps:
+  Applying the steps:
 
-  Tickers:
+  1. Tickers:
 
-  Main ticker symbol: GTI
-  Excluded tickers mentioned for comparison: NCC
-  Title:
+  Main Ticker Symbol(s): DOCU, AMZN, META
 
-  "GlobalTech Unveils Next-Gen Processor Chip"
-  Author:
+  2. Title:
 
-  Sarah Lin
-  Category:
+  Title: "3 Bear Market Tech Stocks Most Likely to Make a Comeback"
+  3. Author:
 
-  Product and Innovation: The article focuses on GlobalTech's new processor chip launch and its technological advancements.
-  Summary:
+  Author: Jake Lerch, Justin Pope, and Will Healy
+  4. Source Category:
 
-  GlobalTech Inc. (GTI) has announced the release of its latest processor chip, QuantumX, which is set to revolutionize computing speeds. The new chip is expected to outperform competitors, positioning GTI ahead of companies like NanoChip Corp. (NCC) and MicroProcessors Ltd. CEO Alex Thompson expressed optimism about QuantumX's potential impact on the market, highlighting its advanced technology and anticipated consumer adoption. This launch signifies a major step for GTI in solidifying its position in the tech industry and could lead to increased market share and revenues for the company.
+  Category: Opinion/Editorials (Op-Eds)
+  5. Summary: The article identifies three technology stocks—DocuSign (DOCU), Amazon (AMZN), and Meta Platforms (META)—that have experienced significant declines in value during the bear market but show potential for recovery. DocuSign has seen a 64% drop in 2022 but maintains a reasonable valuation coupled with a growing user base, indicating potential for future growth. Amazon, despite losing approximately half of its value since its peak in 2021, benefits from its robust cloud computing division, AWS, which remains a strong revenue driver. Meta Platforms has suffered a substantial decline in 2022 but continues to leverage its large user base and expanding advertising business to regain market traction. The authors express optimism about the rebound prospects of these companies, highlighting their strategic assets and market positions that could facilitate a comeback in the tech sector.
+
+
 
   Now, please proceed to analyze the provided news article using the steps and format shown in the example.
   """
@@ -80,3 +118,6 @@ versionHistory:
   - version: '1.5'
     date: '2024-09-22'
     changes: Prompt Update with detailed
+  - version: '1.6'
+    date: '2024-09-23'
+    changes: Revise structure and add more categories

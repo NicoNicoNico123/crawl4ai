@@ -74,7 +74,7 @@ class Summarize:
             })
         # Parse the JSON string into a Python dictionary
         data = json.loads(result.extracted_content)
-        
+        print(data)
         # Create a DataFrame with the parsed data
         df = pd.DataFrame(data)
         
@@ -94,23 +94,10 @@ if __name__ == "__main__":
     # print(summarizer.prompt)
 
     # Test summarize() method
-    test_url = "https://www.benzinga.com/trading-ideas/previews/23/01/30247610/will-teslas-q4-deliveries-add-strength-to-stocks-recent-upward-momentum-heres-what-to-expe?SNAPI"
+    test_url = "https://www.fool.com/investing/2023/01/15/3-tech-stocks-most-likely-to-make-a-comeback/"
     print(f"\nTesting summarize() with URL: {test_url}")
     try:
-        result_df = summarizer.summarize(test_url)
-        print("\nSummarization result:")
+        summarizer.summarize(test_url)
         
-        # Set display options
-        pd.set_option('display.max_columns', None)
-        pd.set_option('display.width', None)
-        pd.set_option('display.max_colwidth', None)
-        
-        # Print the DataFrame
-        print(result_df.to_string(index=False))
-        
-        # Reset display options to default (optional)
-        pd.reset_option('display.max_columns')
-        pd.reset_option('display.width')
-        pd.reset_option('display.max_colwidth')
     except Exception as e:
         print(f"An error occurred during summarization: {str(e)}")
