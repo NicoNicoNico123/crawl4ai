@@ -53,8 +53,10 @@ class SummaryNews:
         
 
 if __name__ == "__main__":
-    start_date = '2023-01-15'
+    start_date = '2023-02-01'
     end_date = '2023-02-15'
+    provider = "sambanova/Meta-Llama-3.1-405B-Instruct"
+    api_token = os.getenv('SAMBANOVA_API_KEY')
     SummaryNews.summarize(start_date=start_date, 
                            end_date=end_date,
                            symbol='META', 
